@@ -59,19 +59,33 @@ func Build(points []Point, axis string) *KDTree {
 	}
 	return k
 }
-
-func (k *KDTree) Insert(point *Point, axis string) *KDTree {
-	if k == nil {
-		kd := Build([]Point{*point}, axis)
-		return kd
-	}
-	if k.axis == "x" {
-
-	}
-
+func (k *KDTree) inbox(box *[4]Point) bool {
+	return true
 }
+func (k *KDTree) rangeSearch(box *[4]Point, sol []Point) []Point {
+	if k.inbox(box) {
+		sol = append(sol, k.median)
+	}
+	if k.left != nil {
+		sol = k.left.rangeSearch(box, sol)
+	}
+	if k.right != nil {
+		sol = k.right.rangeSearch(box, sol)
+	}
+	return sol
+}
+
 func main() {
-	points := []Point{Point{x: 1, y: 9}, Point{x: 2, y: 3}, Point{x: 4, y: 1}, Point{x: 3, y: 7}, Point{x: 5, y: 4}, Point{x: 6, y: 8}, Point{x: 7, y: 2}, Point{x: 8, y: 8}, Point{x: 7, y: 9}, Point{x: 9, y: 6}}
+	points := []Point{{x: 1, y: 9}, {x: 2, y: 3}, {x: 4, y: 1}, {x: 3, y: 7}, {x: 5, y: 4}, {x: 6, y: 8}, {x: 7, y: 2}, {x: 8, y: 8}, {x: 7, y: 9}, {x: 9, y: 6}}
 	kd := Build(points, "x")
-	fmt.Println(kd.right.right)
+	inboxPoints := []Point{}
+	//fmt.Println(kd.points)
+	//fmt.Println(kd.left.points)
+	//fmt.Println(kd.right.points)
+	//fmt.Println(kd.left.left.points)
+	//fmt.Println(kd.left.right.points)
+	//fmt.Println(kd.right.left.points)
+	//fmt.Println(kd.right.right.points)
+	inboxPoints = kd.rangeSearch(&[4]Point{{x: 2, y: 2}, {x: 2, y: 4}, {x: 4, y: 2}, {x: 4, y: 4}}, inboxPoints)
+	fmt.Println(inboxPoints)
 }
